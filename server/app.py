@@ -19,29 +19,44 @@ def home():
 
 @app.route('/animal/<int:id>')
 def animal_by_id(id):
-    return '''
-    <ul>Name</ul>,
-    <ul>Species</ul>
-    <ul>Zookeeper</ul>
-    <ul>Enclosure</ul>
-    '''
+    animal = Animal.query.get(id)
+    if animal:
+        return '''
+        <ul>Name: {animal.name}</ul>
+        <ul>Species: {animal.species}</ul>
+        <ul>Zookeeper: {animal.Zookeeper.name}</ul>
+        <ul>Enclosure: {animal.enclosure.environment}</ul>
+        '''
+    else:
+        return make_response('Animal not found', 404)
 
 @app.route('/zookeeper/<int:id>')
 def zookeeper_by_id(id):
-    return '''
-    <ul>Name</ul>
-    <ul>Birthday</ul>
-    <ul>Animal</ul>
-    
-'''
+    zookeeper = Zookeeper.query.get(id)
+    if zookeeper:
+        return f'''
+        <ul>Name: {zookeeper.name}</ul>
+        <ul>Birthday: {zookeeper.birthday}</ul>
+        <ul>Animals:
+            <ul>{", ".join(animal.name for animal in zookeeper.animals)}</ul>
+        </ul>
+        '''
+    else:
+        return make_response("Zookeeper not found", 404)
 
 @app.route('/enclosure/<int:id>')
 def enclosure_by_id(id):
-    return '''
-    <ul>Environment</ul>
-    <ul>Open to Visitors</ul>
-    <ul>Animal</ul>
-'''
+    enclosure = Enclosure.query.get(id)
+    if enclosure:
+        return f'''
+        <ul>Environment: {enclosure.environment}</ul>
+        <ul>Open to Visitors: {enclosure.open_to_visitors}</ul>
+        <ul>Animals:
+            <ul>{", ".join(animal.name for animal in enclosure.animals)}</ul>
+        </ul>
+        '''
+    else:
+        return make_response("Enclosure not found", 404)
 
 
 if __name__ == '__main__':
